@@ -120,5 +120,7 @@ then
   exit
 fi
 
-export PYENV_ROOT="$HOME/.pyenv"
+export PUBLIC_GITHUB_CLONES_DIR=~/public_github_clones
+
+export PYENV_ROOT=$PUBLIC_GITHUB_CLONES_DIR/pyenv
 export PATH="$PYENV_ROOT/bin:$PATH"
