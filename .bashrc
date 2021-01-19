@@ -124,3 +124,10 @@ export PUBLIC_GITHUB_CLONES_DIR=~/public_github_clones
 
 export PYENV_ROOT=$PUBLIC_GITHUB_CLONES_DIR/pyenv
 export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/home/bnjmnbrmn/.sdkman"
+[[ -s "/home/bnjmnbrmn/.sdkman/bin/sdkman-init.sh" ]] && source "/home/bnjmnbrmn/.sdkman/bin/sdkman-init.sh"
