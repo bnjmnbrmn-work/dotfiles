@@ -185,6 +185,8 @@ Plugin 'tpope/vim-ragtag'
 "Plugin 'ternjs/tern_for_vim'
 "Plugin 'flowtype/vim-flow'
 
+Plugin 'whonore/Coqtail'
+
 " end plugin definition
 call vundle#end()  " required for vundle
 
@@ -236,3 +238,6 @@ nnoremap <leader>q :bp<cr>:bd #<cr>
 "let g:tern_map_prefix='<leader>'
 
 "au BufRead,BufNewFile .tern-project setfiletype json
+
+noremap <C-M-j> :CoqNext<cr>
+noremap <C-M-k> :CoqUndo<cr>

@@ -27,76 +27,31 @@ shopt -s checkwinsize
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
 
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
 # set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
+#if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+#    debian_chroot=$(cat /etc/debian_chroot)
+#fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color|screen-256color) color_prompt=yes;;
+    xterm-color|screen-256color|xterm-256color) color_prompt=yes;;
 esac
 
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-#force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
-    fi
-fi
 
 
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
-unset color_prompt force_color_prompt
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
+export CLICOLOR=1
+export LSCOLORS=gxfxcxdxbxegedabagacad
 
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
-
-# some more ls aliases
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias sed=gsed
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
@@ -113,21 +68,105 @@ if ! shopt -oq posix; then
   fi
 fi
 
+
 export EDITOR=vim
-if [[ "$TERM" != "screen-256color" ]]
-then
-  tmux attach-session -t "$USER" || tmux new-session -s "$USER"
-  exit
-fi
 
-export PUBLIC_GITHUB_CLONES_DIR=~/public_github_clones
+#PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[00;35m\]\w\[\033[00m\]\$ '
+source ~/.git-prompt.sh
+function __get_prompt {
+  if [ -z "$AWS_PROFILE" ]; then
+    AWS_PROFILE_PROMPT_COMPONENT=""
+  else
+    AWS_PROFILE_PROMPT_COMPONENT="\[\033[38;5;220m\]$AWS_PROFILE\[\033[00m\]:"
+  fi
+  __git_ps1 "\[\033[01;32m\]\u@\h\[\033[00m\]:$AWS_PROFILE_PROMPT_COMPONENT\[\033[00;35m\]\w\[\033[00m\]" "\n\$ "
+}
+#PROMPT_COMMAND='__git_ps1 "\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[00;35m\]\w\[\033[00m\]" "\$ "'
+PROMPT_COMMAND='__get_prompt'
+GIT_PS1_SHOWDIRTYSTATE=true
+GIT_PS1_SHOWSTASHSTATE=true
+GIT_PS1_SHOWUNTRACKEDFILES=true
+GIT_PS1_SHOWUPSTREAM="auto"
+GIT_PS1_DESCRIBE_STYLE=branch
+GIT_PS1_SHOWCOLORHINTS=true
 
-export PYENV_ROOT=$PUBLIC_GITHUB_CLONES_DIR/pyenv
-export PATH="$PYENV_ROOT/bin:$PATH"
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
-fi
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/home/bnjmnbrmn/.sdkman"
-[[ -s "/home/bnjmnbrmn/.sdkman/bin/sdkman-init.sh" ]] && source "/home/bnjmnbrmn/.sdkman/bin/sdkman-init.sh"
+#this particular trick unfortunately means that node and npm won't be included in PATH
+#leaving it here in case it leads to a better solution
+#mynvm() {
+#  unalias nvm
+#  if [ -z "$nvm_unset" ]; then
+#    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#    nvm_unset=false
+#  fi
+#  nvm "$@"
+#}
+#alias nvm=mynvm
+
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+alias gpg2=gpg
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+#export PATH="$PATH:$HOME/.rvm/bin"
+
+#[[ -r $rvm_path/scripts/completion ]] && . $rvm_path/scripts/completion
+
+complete -C '/opt/homebrew/bin/aws_completer' aws
+#complete -C '/Users/bermanb/.asdf/shims/aws_completer' aws
+
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  case "$command" in
+    cd)           fzf "$@" --preview 'tree -C {} | head -200' ;;
+    mv|cp|rm)     fzf "$@" --preview 'cat {} | head -200' ;;
+    *)            fzf "$@" ;;
+  esac
+}
+
+#. <(npm completion)
+. ~/.npm_completion
+
+
+# heroku autocomplete setup
+HEROKU_AC_BASH_SETUP_PATH=/Users/bermanb/Library/Caches/heroku/autocomplete/bash_setup && test -f $HEROKU_AC_BASH_SETUP_PATH && source $HEROKU_AC_BASH_SETUP_PATH;
+
+eval "$(starship init bash)"
+. "$HOME/.cargo/env"
+
+[ -f "/Users/bermanb/.ghcup/env" ] && source "/Users/bermanb/.ghcup/env" # ghcup-env
+
+export PATH=$HOME/.asdf/shims:$PATH
+export PATH=/Applications/Coq-Platform~8.15~2022.04.app/Contents/Resources/bin:$PATH
+export PATH=~/.emacs.d/bin:$PATH
+
+#alias emacs="emacs -c -a ''"
+
+#export PATH=/nix/store/mbvlwkzp6g4nfbcas1xw10crh7v1jrx7-deno-1.28.3/bin:$PATH
+
+export PATH=/Users/bermanb/ce/emacs_stuff/emacs-from-scratch/.emacs.d:$PATH
+
+alias kx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config current-context ; } ; f'
+alias kn='f() { [ "$1" ] && kubectl config set-context --current --namespace $1 || kubectl config view --minify | grep namespace | cut -d" " -f6 ; } ; f'
+
+export UPMC_ROOT_CA=$HOME/certs_to_trust/UPMC-ROOT-CA.pem
+
+export AWS_CA_BUNDLE=~/certs_to_trust/AWS_AND_UPMC_BUNDLE.pem
+
+export LESS=-XR
+
+export GITLAB_HOME="$HOME/gitlab"
+
+export SOURCE4ENV_DIR=/Users/bermanb/projects/cdris/hcos_operations/source4env
+
+for file in $(ls -1 "$SOURCE4ENV_DIR"); do
+  alias "sac${file}"=". ${SOURCE4ENV_DIR}/${file}"
+done
+

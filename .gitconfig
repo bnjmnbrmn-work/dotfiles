@@ -1,3 +1,11 @@
 [user]
-	email = baberman@mmm.com
+	email = bermanb@upmc.edu
 	name = Benjamin Berman
+[alias]
+	co = checkout
+	ci = commit
+	br = branch
+	st = status
+	unstage = reset HEAD --
+	last = log -1 HEAD
+  lg = log --oneline --all --graph --decorate
