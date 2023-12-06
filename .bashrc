@@ -143,15 +143,16 @@ eval "$(starship init bash)"
 
 [ -f "/Users/bermanb/.ghcup/env" ] && source "/Users/bermanb/.ghcup/env" # ghcup-env
 
-export PATH=$HOME/.asdf/shims:$PATH
-export PATH=/Applications/Coq-Platform~8.15~2022.04.app/Contents/Resources/bin:$PATH
-export PATH=~/.emacs.d/bin:$PATH
+export PATH="$HOME/.asdf/shims:$PATH"
+export PATH="/Applications/Coq-Platform~8.15~2022.04.app/Contents/Resources/bin:$PATH"
+export PATH="~/.emacs.d/bin:$PATH"
 
 #alias emacs="emacs -c -a ''"
 
 #export PATH=/nix/store/mbvlwkzp6g4nfbcas1xw10crh7v1jrx7-deno-1.28.3/bin:$PATH
 
-export PATH=/Users/bermanb/ce/emacs_stuff/emacs-from-scratch/.emacs.d:$PATH
+#export PATH=/Users/bermanb/ce/emacs_stuff/emacs-from-scratch/.emacs.d:$PATH
+export PATH="/Users/bermanb/.config/emacs/bin:$PATH"
 
 alias kx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config current-context ; } ; f'
 alias kn='f() { [ "$1" ] && kubectl config set-context --current --namespace $1 || kubectl config view --minify | grep namespace | cut -d" " -f6 ; } ; f'
@@ -170,3 +171,73 @@ for file in $(ls -1 "$SOURCE4ENV_DIR"); do
   alias "sac${file}"=". ${SOURCE4ENV_DIR}/${file}"
 done
 
+em () {
+  emacsclient -c -a '' "$@" &
+}
+
+en () {
+  emacsclient -c -a '' -t "$@"
+}
+
+. ~/.private/artifactory_credentials.sh
+
+#export CDPATH=~/projects/cdris:$CDPATH
+#export CDPATH=~/projects/hedis:$CDPATH
+#export CDPATH=~/projects/api-gateway:$CDPATH
+#export CDPATH=~/projects/juno:$CDPATH
+#export CDPATH=~/projects/kamioka:$CDPATH
+#export CDPATH=~/projects/bermanb:$CDPATH
+
+
+pushd()
+{
+  if [ $# -eq 0 ]; then
+    DIR="${HOME}"
+  else
+    DIR="$1"
+  fi
+
+  builtin pushd "${DIR}" > /dev/null
+#  echo -n "DIRSTACK: "
+#  dirs
+}
+
+pushd_builtin()
+{
+  builtin pushd > /dev/null
+#  echo -n "DIRSTACK: "
+#  dirs
+}
+
+popd()
+{
+  builtin popd > /dev/null
+#  echo -n "DIRSTACK: "
+  dirs
+}
+
+alias cd='pushd'
+alias back='popd'
+alias flip='pushd_builtin'
+
+#alias gd=pushd
+#alias pd=popd
+#alias slurp='pushd - && pushd'
+alias dirs='dirs -v'
+
+alias cd1='pushd +1'
+alias cd2='pushd +2'
+alias cd3='pushd +3'
+alias cd4='pushd +4'
+alias cd5='pushd +5'
+alias cd6='pushd +6'
+alias cd7='pushd +7'
+alias cd8='pushd +8'
+alias cd9='pushd +9'
+
+
+alias sdh='cd "$(eval ls -d "$(builtin dirs -p | uniq | fzf )")"'
+
+export PATH="${PATH}:/Users/bermanb/.azureauth/0.8.0"
+
+export OPENSSL_CONF=~/.config/openssl.cnf

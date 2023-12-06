@@ -1,3 +1,4 @@
+
 [[ -s "$HOME/.profile" ]] && source "$HOME/.profile" 
 #function ts() {
 #  gdate +"%T.%3N"
@@ -56,9 +57,9 @@ export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/opt/homebrew/opt/openssl@1.1"
 
 alias dvev='. ~/.gradle/dv_gradle_envars.sh'
 
-#if (docker info | grep aarch64 >/dev/null) && [  "$DOCKER_DEFAULT_PLATFORM" != "linux/amd64" ]; then
+if (docker info | grep aarch64 >/dev/null) && [  "$DOCKER_DEFAULT_PLATFORM" != "linux/amd64" ]; then
     export DV_DOCKER_PLATFORM='linux/arm64'
-#fi
+fi
 
 . ${HOMEBREW_PREFIX}/etc/profile.d/z.sh
 
@@ -76,3 +77,6 @@ export PATH="/opt/homebrew/opt/llvm@12/bin:$PATH"
 [[ -f ~/.bashrc ]] && source ~/.bashrc 
 
 . ~/.quarkus_bash_completion
+
+export NODE_EXTRA_CA_CERTS=/Users/bermanb/certs_to_trust/UPMC-Root-CA.pem
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
