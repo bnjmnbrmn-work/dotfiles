@@ -71,54 +71,12 @@ fi
 
 export EDITOR=vim
 
-#PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[00;35m\]\w\[\033[00m\]\$ '
-source ~/.git-prompt.sh
-function __get_prompt {
-  if [ -z "$AWS_PROFILE" ]; then
-    AWS_PROFILE_PROMPT_COMPONENT=""
-  else
-    AWS_PROFILE_PROMPT_COMPONENT="\[\033[38;5;220m\]$AWS_PROFILE\[\033[00m\]:"
-  fi
-  __git_ps1 "\[\033[01;32m\]\u@\h\[\033[00m\]:$AWS_PROFILE_PROMPT_COMPONENT\[\033[00;35m\]\w\[\033[00m\]" "\n\$ "
-}
-#PROMPT_COMMAND='__git_ps1 "\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[00;35m\]\w\[\033[00m\]" "\$ "'
-PROMPT_COMMAND='__get_prompt'
-GIT_PS1_SHOWDIRTYSTATE=true
-GIT_PS1_SHOWSTASHSTATE=true
-GIT_PS1_SHOWUNTRACKEDFILES=true
-GIT_PS1_SHOWUPSTREAM="auto"
-GIT_PS1_DESCRIBE_STYLE=branch
-GIT_PS1_SHOWCOLORHINTS=true
-
-
-#this particular trick unfortunately means that node and npm won't be included in PATH
-#leaving it here in case it leads to a better solution
-#mynvm() {
-#  unalias nvm
-#  if [ -z "$nvm_unset" ]; then
-#    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-#    nvm_unset=false
-#  fi
-#  nvm "$@"
-#}
-#alias nvm=mynvm
-
-#export NVM_DIR="$HOME/.nvm"
-#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 alias gpg2=gpg
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-#export PATH="$PATH:$HOME/.rvm/bin"
 
-#[[ -r $rvm_path/scripts/completion ]] && . $rvm_path/scripts/completion
-
-complete -C '/opt/homebrew/bin/aws_completer' aws
-#complete -C '/Users/bermanb/.asdf/shims/aws_completer' aws
-
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+#[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+eval "$(fzf --bash)"
 
 _fzf_comprun() {
   local command=$1
@@ -132,44 +90,24 @@ _fzf_comprun() {
 }
 
 #. <(npm completion)
-. ~/.npm_completion
+#. ~/.npm_completion
 
 
-# heroku autocomplete setup
-HEROKU_AC_BASH_SETUP_PATH=/Users/bermanb/Library/Caches/heroku/autocomplete/bash_setup && test -f $HEROKU_AC_BASH_SETUP_PATH && source $HEROKU_AC_BASH_SETUP_PATH;
 
 eval "$(starship init bash)"
-. "$HOME/.cargo/env"
 
-[ -f "/Users/bermanb/.ghcup/env" ] && source "/Users/bermanb/.ghcup/env" # ghcup-env
 
 export PATH="$HOME/.asdf/shims:$PATH"
-export PATH="/Applications/Coq-Platform~8.15~2022.04.app/Contents/Resources/bin:$PATH"
-export PATH="~/.emacs.d/bin:$PATH"
 
-#alias emacs="emacs -c -a ''"
-
-#export PATH=/nix/store/mbvlwkzp6g4nfbcas1xw10crh7v1jrx7-deno-1.28.3/bin:$PATH
-
-#export PATH=/Users/bermanb/ce/emacs_stuff/emacs-from-scratch/.emacs.d:$PATH
-export PATH="/Users/bermanb/.config/emacs/bin:$PATH"
-
-alias kx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config current-context ; } ; f'
-alias kn='f() { [ "$1" ] && kubectl config set-context --current --namespace $1 || kubectl config view --minify | grep namespace | cut -d" " -f6 ; } ; f'
-
-export UPMC_ROOT_CA=$HOME/certs_to_trust/UPMC-ROOT-CA.pem
-
-export AWS_CA_BUNDLE=~/certs_to_trust/AWS_AND_UPMC_BUNDLE.pem
+#alias kx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config current-context ; } ; f'
+#alias kn='f() { [ "$1" ] && kubectl config set-context --current --namespace $1 || kubectl config view --minify | grep namespace | cut -d" " -f6 ; } ; f'
 
 export LESS=-XR
 
-export GITLAB_HOME="$HOME/gitlab"
-
-export SOURCE4ENV_DIR=/Users/bermanb/projects/cdris/hcos_operations/source4env
-
-for file in $(ls -1 "$SOURCE4ENV_DIR"); do
-  alias "sac${file}"=". ${SOURCE4ENV_DIR}/${file}"
-done
+#export SOURCE4ENV_DIR=~/source4env
+#for file in $(ls -1 "$SOURCE4ENV_DIR"); do
+#  alias "sac${file}"=". ${SOURCE4ENV_DIR}/${file}"
+#done
 
 em () {
   emacsclient -c -a '' "$@" &
@@ -179,14 +117,6 @@ en () {
   emacsclient -c -a '' -t "$@"
 }
 
-. ~/.private/artifactory_credentials.sh
-
-#export CDPATH=~/projects/cdris:$CDPATH
-#export CDPATH=~/projects/hedis:$CDPATH
-#export CDPATH=~/projects/api-gateway:$CDPATH
-#export CDPATH=~/projects/juno:$CDPATH
-#export CDPATH=~/projects/kamioka:$CDPATH
-#export CDPATH=~/projects/bermanb:$CDPATH
 
 
 pushd()
@@ -198,8 +128,6 @@ pushd()
   fi
 
   builtin pushd "${DIR}" > /dev/null
-#  echo -n "DIRSTACK: "
-#  dirs
 }
 
 pushd_builtin()
@@ -241,3 +169,15 @@ alias sdh='cd "$(eval ls -d "$(builtin dirs -p | uniq | fzf )")"'
 export PATH="${PATH}:/Users/bermanb/.azureauth/0.8.0"
 
 export OPENSSL_CONF=~/.config/openssl.cnf
+
+export PATH="~/.config/emacs/bin:$PATH"
+
+if [ -d "/Applications/Emacs.app/Contents/MacOS" ]; then
+    export PATH="/Applications/Emacs.app/Contents/MacOS:$PATH"
+    export PATH="/Applications/Emacs.app/Contents/MacOS/bin-arm64-11:$PATH"
+    alias emacs=Emacs
+fi
+[[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+
+# Created by `pipx` on 2024-08-07 14:01:03
+export PATH="$PATH:/Users/benjamin-berman/.local/bin"
